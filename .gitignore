@@ -1,0 +1,21 @@
+# Built variants / Android Studio output
+*.apk
+*.aar
+*.ap_
+*.aab
+bin/
+build/
+
+# Local configuration files
+local.properties
+
+# Android Studio internal files
+.gradle/
+.idea/
+*.iml
+.cxx/
+captures/
+
+# OS generated files
+.DS_Store
+Thumbs.db
