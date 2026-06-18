@@ -3,6 +3,10 @@ package com.example.hs_map_frontend.ui.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
+import com.example.hs_map_frontend.ui.screens.auth.AppLanguage
 
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryTeal,
@@ -15,9 +19,21 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 @Composable
-fun HSMapTheme(content: @Composable () -> Unit) {
+fun HSMapTheme(
+    currentLanguage: AppLanguage = AppLanguage.ENGLISH,
+    content: @Composable () -> Unit
+) {
+    val layoutDirection = if (currentLanguage == AppLanguage.URDU) {
+        LayoutDirection.Rtl
+    } else {
+        LayoutDirection.Ltr
+    }
+
     MaterialTheme(
         colorScheme = DarkColorScheme,
-        content = content
-    )
+    ) {
+        CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+            content()
+        }
+    }
 }

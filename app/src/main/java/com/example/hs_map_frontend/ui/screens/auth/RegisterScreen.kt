@@ -11,13 +11,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.hs_map_frontend.ui.components.AppTextField
+import com.example.hs_map_frontend.ui.viewmodels.MainViewModel
 
 @Composable
-fun RegisterScreen(navController: NavHostController) {
+fun RegisterScreen(
+    navController: NavHostController,
+    viewModel: MainViewModel
+) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -34,50 +39,45 @@ fun RegisterScreen(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Create Account",
+                text = if (viewModel.language == AppLanguage.URDU) "نیا اکاؤنٹ بنائیں" else "Create Account",
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(32.dp))
 
-            OutlinedTextField(
+            AppTextField(
                 value = name,
                 onValueChange = { name = it },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                singleLine = true,
-                placeholder = { Text("Full Name", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)) },
+                placeholderText = if (viewModel.language == AppLanguage.URDU) "پورا نام" else "Full Name",
                 keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
+            AppTextField(
                 value = email,
                 onValueChange = { email = it },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                singleLine = true,
-                placeholder = { Text("Email", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)) },
+                placeholderText = if (viewModel.language == AppLanguage.URDU) "ای میل ایڈریس" else "Email Address",
                 keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
                 )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
+            AppTextField(
                 value = password,
                 onValueChange = { password = it },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                        singleLine = true,
-                placeholder = { Text("Password", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)) },
+                placeholderText = if (viewModel.language == AppLanguage.URDU) "پاس ورڈ" else "Password",
+                isPassword = true,
                 keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
                 )
             )
 
@@ -94,7 +94,7 @@ fun RegisterScreen(navController: NavHostController) {
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Text(
-                    text = "Sign Up",
+                    text = if (viewModel.language == AppLanguage.URDU) "سائن اپ کریں" else "Sign Up",
                     color = MaterialTheme.colorScheme.onPrimary,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
@@ -103,10 +103,16 @@ fun RegisterScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Row {
-                Text(text = "Already have an account? ", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
                 Text(
-                    text = "Login",
+                    text = if (viewModel.language == AppLanguage.URDU) "کیا آپ کا پہلے سے اکاؤنٹ ہے؟ " else "Already have an account? ",
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                )
+                Text(
+                    text = if (viewModel.language == AppLanguage.URDU) "لاگ ان" else "Login",
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable {
