@@ -7,15 +7,18 @@ import androidx.activity.viewModels
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.hs_map_frontend.data.RetrofitClient
+import com.example.hs_map_frontend.data.repositories.AuthRepository
 import com.example.hs_map_frontend.ui.navigation.Screen
 import com.example.hs_map_frontend.ui.screens.auth.LoginScreen
 import com.example.hs_map_frontend.ui.screens.auth.RegisterScreen
 import com.example.hs_map_frontend.ui.screens.splash.SplashScreen
 import com.example.hs_map_frontend.ui.theme.HSMapTheme
+import com.example.hs_map_frontend.ui.viewmodels.AuthViewModel
 import com.example.hs_map_frontend.ui.viewmodels.MainViewModel
 
 class MainActivity : ComponentActivity() {
@@ -56,12 +59,19 @@ fun AppNavigation(viewModel: MainViewModel) {
         }
 
         composable(route = Screen.Register.route) {
-            RegisterScreen(navController = navController,
-                viewModel = viewModel)
+            val repository = AuthRepository(RetrofitClient.authService)
+            val authViewModel: AuthViewModel = viewModel(
+                factory = AuthViewModel.Factory(repository)
+            )
+
+            RegisterScreen(
+                navController = navController,
+                mainViewModel = viewModel,
+                authViewModel = authViewModel
+            )
         }
 
         composable(route = Screen.Dashboard.route) {
-            // DashboardScreen can take the same viewModel parameter later if needed
         }
     }
 }
