@@ -20,6 +20,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hsmapfrontend"
         android:usesCleartextTraffic="true">
+
+        <meta-data
+            android:name="org.maplibre.token"
+            android:value="pk.placeholder" />
+
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"

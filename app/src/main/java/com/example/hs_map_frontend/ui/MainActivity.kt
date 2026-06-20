@@ -16,6 +16,7 @@ import com.example.hs_map_frontend.data.repositories.AuthRepository
 import com.example.hs_map_frontend.ui.navigation.Screen
 import com.example.hs_map_frontend.ui.screens.auth.LoginScreen
 import com.example.hs_map_frontend.ui.screens.auth.RegisterScreen
+import com.example.hs_map_frontend.ui.screens.mapdisplay.MapDisplayScreen
 import com.example.hs_map_frontend.ui.screens.splash.SplashScreen
 import com.example.hs_map_frontend.ui.theme.HSMapTheme
 import com.example.hs_map_frontend.ui.viewmodels.AuthViewModel
@@ -73,6 +74,10 @@ fun AppNavigation(viewModel: MainViewModel) {
         }
 
         composable(route = Screen.Dashboard.route) {
+            MapDisplayScreen(
+                navController = navController,
+                mainViewModel = viewModel
+            )
         }
     }
 }
