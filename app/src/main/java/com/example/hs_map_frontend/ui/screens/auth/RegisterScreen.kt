@@ -18,9 +18,7 @@ import androidx.navigation.NavHostController
 import com.example.hs_map_frontend.data.db_models.RegisterRequest
 import com.example.hs_map_frontend.ui.components.AppTextField
 import com.example.hs_map_frontend.ui.navigation.Screen
-import com.example.hs_map_frontend.ui.viewmodels.AuthViewModel
-import com.example.hs_map_frontend.ui.viewmodels.MainViewModel
-import com.example.hs_map_frontend.ui.viewmodels.RegisterUiState
+import com.example.hs_map_frontend.ui.viewmodels.*
 
 @Composable
 fun RegisterScreen(
@@ -32,13 +30,10 @@ fun RegisterScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    // Read the current network status emitted by our data pipeline
-    val uiState by authViewModel.uiState
+    val uiState by authViewModel.registerState
 
-    // Handle single-fire navigation side-effects safely when registration succeeds
     LaunchedEffect(uiState) {
         if (uiState is RegisterUiState.Success) {
-            // Clear backstack and drop user right into your Map Dashboard
             navController.navigate(Screen.Dashboard.route) {
                 popUpTo(Screen.Splash.route) { inclusive = true }
             }
@@ -64,7 +59,6 @@ fun RegisterScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Display error text banners if validation or database conflicts occur
             if (uiState is RegisterUiState.Error) {
                 Text(
                     text = (uiState as RegisterUiState.Error).error,

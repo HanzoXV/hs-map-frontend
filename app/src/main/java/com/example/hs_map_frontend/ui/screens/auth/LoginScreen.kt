@@ -17,19 +17,38 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.hs_map_frontend.data.db_models.LoginRequest
 import com.example.hs_map_frontend.ui.components.AppTextField
 import com.example.hs_map_frontend.ui.navigation.Screen
-import com.example.hs_map_frontend.ui.viewmodels.MainViewModel
-
-enum class AppLanguage { ENGLISH, URDU }
+import com.example.hs_map_frontend.ui.viewmodels.*
 
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    authViewModel: AuthViewModel,
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var localError by remember { mutableStateOf("") }
+
+    val loginState by authViewModel.loginState
+
+    LaunchedEffect(loginState) {
+        when (val state = loginState) {
+            is LoginUiState.Success -> {
+                navController.navigate(Screen.Dashboard.route) {
+                    popUpTo(Screen.Login.route) { inclusive = true }
+                }
+                authViewModel.resetLoginState()
+            }
+            is LoginUiState.Error -> {
+                localError = state.error
+                authViewModel.resetLoginState()
+            }
+            else -> Unit
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -87,6 +106,7 @@ fun LoginScreen(
                     }
                 }
             }
+
             Text(
                 text = if (viewModel.language == AppLanguage.URDU) "خوش آمدید" else "Welcome Back",
                 color = MaterialTheme.colorScheme.onBackground,
@@ -102,7 +122,6 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // 👈 Clean email field wrapper call
             AppTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -130,22 +149,37 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-                    navController.navigate(Screen.Dashboard.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
+                    if (email.isBlank() || password.isBlank()) {
+                        localError = if (viewModel.language == AppLanguage.URDU)
+                            "تمام فیلڈز کو بھرنا ضروری ہے"
+                        else
+                            "All fields must be filled."
+                    } else {
+                        localError = ""
+                        authViewModel.handleLogin(LoginRequest(email, password))
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
+                enabled = loginState !is LoginUiState.Loading,
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
-                Text(
-                    text = if (viewModel.language == AppLanguage.URDU) "لاگ ان کریں" else "Login",
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                if (loginState is LoginUiState.Loading) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text(
+                        text = if (viewModel.language == AppLanguage.URDU) "لاگ ان کریں" else "Login",
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -167,6 +201,20 @@ fun LoginScreen(
                     }
                 )
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            if (localError.isNotEmpty()) {
+                Text(
+                    text = localError,
+                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.6f),
+                    fontSize = 14.sp
+                )
+            }
         }
     }
+}
+
+enum class AppLanguage {
+    URDU, ENGLISH
 }

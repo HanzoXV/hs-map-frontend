@@ -6,8 +6,3 @@ data class RegisterRequest(
     val password: String,
     val preferredLanguage: String
 )
-
-data class RegisterResponse(
-    val message: String,
-    val userId: String?
-)

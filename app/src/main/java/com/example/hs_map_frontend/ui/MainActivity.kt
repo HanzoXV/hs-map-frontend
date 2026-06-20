@@ -39,6 +39,10 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation(viewModel: MainViewModel) {
     val navController = rememberNavController()
 
+    val repository = AuthRepository(RetrofitClient.authService)
+    val authViewModel: AuthViewModel = viewModel(
+        factory = AuthViewModel.Factory(repository)
+    )
     NavHost(
         navController = navController,
         startDestination = Screen.Splash.route,
@@ -54,15 +58,12 @@ fun AppNavigation(viewModel: MainViewModel) {
         composable(Screen.Login.route) {
             LoginScreen(
                 navController = navController,
-                viewModel = viewModel
+                viewModel = viewModel,
+                authViewModel = authViewModel
             )
         }
 
         composable(route = Screen.Register.route) {
-            val repository = AuthRepository(RetrofitClient.authService)
-            val authViewModel: AuthViewModel = viewModel(
-                factory = AuthViewModel.Factory(repository)
-            )
 
             RegisterScreen(
                 navController = navController,
